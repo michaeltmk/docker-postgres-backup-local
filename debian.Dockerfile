@@ -10,6 +10,12 @@ RUN set -x \
 	&& chmod a+x /usr/local/bin/go-cron \
 	&& apt-get purge -y --auto-remove ca-certificates && apt-get clean
 
+# install s3 tools
+RUN apt-get install python py2-pip -y
+RUN pip install awscli
+RUN apt-get remove py2-pip -y
+#RUN apt-get purge -y --auto-remove ca-certificates && apt-get clean
+
 ENV POSTGRES_DB="**None**" \
     POSTGRES_DB_FILE="**None**" \
     POSTGRES_HOST="**None**" \
@@ -28,6 +34,15 @@ ENV POSTGRES_DB="**None**" \
     BACKUP_KEEP_WEEKS=4 \
     BACKUP_KEEP_MONTHS=6 \
     HEALTHCHECK_PORT=8080
+
+ENV S3_ENABLE no
+ENV S3_ACCESS_KEY_ID **None**
+ENV S3_SECRET_ACCESS_KEY **None**
+ENV S3_BUCKET **None**
+ENV S3_REGION us-west-1
+ENV S3_PATH 'backup'
+ENV S3_ENDPOINT **None**
+ENV S3_S3V4 no
 
 COPY backup.sh /backup.sh
 

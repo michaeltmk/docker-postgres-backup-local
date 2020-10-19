@@ -2,7 +2,7 @@
 
 # postgres-backup-local
 
-Backup PostgresSQL to the local filesystem with periodic rotating backups, based on [schickling/postgres-backup-s3](https://hub.docker.com/r/schickling/postgres-backup-s3/).
+Backup PostgresSQL to the local filesystem and AWS S3 (optional) with periodic rotating backups, based on [schickling/postgres-backup-s3](https://hub.docker.com/r/schickling/postgres-backup-s3/).
 Backup multiple databases from the same host by setting the database names in `POSTGRES_DB` separated by commas or spaces.
 
 Supports the following Docker architectures: `linux/amd64`, `linux/arm64`, `linux/arm/v7`.
@@ -50,6 +50,15 @@ services:
             - BACKUP_KEEP_WEEKS=4
             - BACKUP_KEEP_MONTHS=6
             - HEALTHCHECK_PORT=8080
+
+            - S3_ENABLE=no
+            - S3_ACCESS_KEY_ID=accessID
+            - S3_SECRET_ACCESS_KEY=accessKey
+            - S3_BUCKET=bucketName
+            - S3_REGION=ap-east-1
+            - S3_PATH='backup'
+            - S3_ENDPOINT=endpoint
+            - S3_S3V4=no
 ```
 
 For security reasons it is recommended to run it as user `postgres:postgres`.

@@ -1,7 +1,7 @@
 #! /bin/sh
 
 set -e
-
+#####################local######################
 if [ "${POSTGRES_DB}" = "**None**" -a "${POSTGRES_DB_FILE}" = "**None**" ]; then
   echo "You need to set the POSTGRES_DB or POSTGRES_DB_FILE environment variable."
   exit 1
@@ -98,5 +98,47 @@ for DB in ${POSTGRES_DBS}; do
   find "${BACKUP_DIR}/weekly" -maxdepth 1 -mtime +${KEEP_WEEKS} -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rf '{}' ';'
   find "${BACKUP_DIR}/monthly" -maxdepth 1 -mtime +${KEEP_MONTHS} -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rf '{}' ';'
 done
+
+######################AWS###################
+set -o pipefail
+
+if [ "${S3_ENABLE}" = "yes" ]; then
+
+  if [ "${S3_S3V4}" = "yes" ]; then
+      aws configure set default.s3.signature_version s3v4
+  fi
+
+  if [ "${S3_ACCESS_KEY_ID}" = "**None**" ]; then
+    echo "You need to set the S3_ACCESS_KEY_ID environment variable."
+    exit 1
+  fi
+
+  if [ "${S3_SECRET_ACCESS_KEY}" = "**None**" ]; then
+    echo "You need to set the S3_SECRET_ACCESS_KEY environment variable."
+    exit 1
+  fi
+
+  if [ "${S3_BUCKET}" = "**None**" ]; then
+    echo "You need to set the S3_BUCKET environment variable."
+    exit 1
+  fi
+
+  if [ "${S3_ENDPOINT}" == "**None**" ]; then
+    AWS_ARGS=""
+  else
+    AWS_ARGS="--endpoint-url ${S3_ENDPOINT}"
+  fi
+
+  # env vars needed for aws tools
+  export AWS_ACCESS_KEY_ID=$S3_ACCESS_KEY_ID
+  export AWS_SECRET_ACCESS_KEY=$S3_SECRET_ACCESS_KEY
+  export AWS_DEFAULT_REGION=$S3_REGION
+
+  aws $AWS_ARGS s3 sync $BACKUP_DIR s3://$S3_BUCKET/$S3_PATH || exit 2
+
+fi
+
+
+
 
 echo "SQL backup created successfully"
