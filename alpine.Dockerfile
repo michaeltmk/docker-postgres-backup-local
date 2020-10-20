@@ -11,9 +11,9 @@ RUN set -x \
 	&& apk del ca-certificates
 
 # install s3 tools
-RUN apk add python py2-pip
-RUN pip install awscli
-RUN apk del py2-pip
+RUN apk add python3 py3-pip
+RUN pip3 install awscli
+
 #RUN apk del ca-certificates
 
 ENV POSTGRES_DB="**None**" \
@@ -33,16 +33,16 @@ ENV POSTGRES_DB="**None**" \
     BACKUP_KEEP_DAYS=7 \
     BACKUP_KEEP_WEEKS=4 \
     BACKUP_KEEP_MONTHS=6 \
-    HEALTHCHECK_PORT=8080 \
+    HEALTHCHECK_PORT=8080
 
-ENV S3_ENABLE no
-ENV S3_ACCESS_KEY_ID **None**
-ENV S3_SECRET_ACCESS_KEY **None**
-ENV S3_BUCKET **None**
-ENV S3_REGION us-west-1
-ENV S3_PATH 'backup'
-ENV S3_ENDPOINT **None**
-ENV S3_S3V4 no
+ENV S3_ENABLE=no \
+    S3_ACCESS_KEY_ID=**None** \
+    S3_SECRET_ACCESS_KEY=**None** \
+    S3_BUCKET=**None** \
+    S3_REGION=us-west-1 \
+    S3_PATH='backup' \
+    S3_ENDPOINT=**None** \
+    S3_S3V4=no
 
 COPY backup.sh /backup.sh
 

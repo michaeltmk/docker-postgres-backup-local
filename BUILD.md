@@ -14,7 +14,9 @@ In order to work in Arch Linux the following initialization commands will be req
 ```sh
 docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 docker buildx rm multibuilder
-docker buildx create --name multibuilder --platform linux/amd64,linux/arm64,linux/arm/v7 --driver docker-container --use
+docker buildx create --name multibuilder
+docker buildx use multibuilder
+#docker buildx create --name multibuilder --platform linux/amd64,linux/arm64,linux/arm/v7 --driver docker-container --use
 docker buildx inspect --bootstrap
 ```
 
@@ -25,7 +27,7 @@ docker buildx inspect --bootstrap
 In order to modify the image name or any other configurable parameter run the `generate.sh` script.
 
 ```sh
-IMAGE_NAME="prodrigestivill/postgres-backup-local" ./generate.sh config.hcl
+IMAGE_NAME="michaeltse/docker-postgres-backup-local-s3" ./generate.sh config.hcl
 ```
 
 ### Build the images
@@ -39,5 +41,5 @@ docker buildx bake --pull -f config.hcl
 In order to publish directly to the repository run this command instead:
 
 ```sh
-docker buildx bake --pull --set common.output=type=registry -f config.hcl
+docker buildx bake --push --set common.output=type=registry -f config.hcl
 ```
