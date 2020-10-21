@@ -8,13 +8,15 @@ RUN set -x \
 	&& apk update && apk add ca-certificates curl \
 	&& curl -L https://github.com/prodrigestivill/go-cron/releases/download/$GOCRONVER/go-cron-$TARGETOS-$TARGETARCH-static.gz | zcat > /usr/local/bin/go-cron \
 	&& chmod a+x /usr/local/bin/go-cron \
-	&& apk del ca-certificates
+	&& apk del ca-certificates curl
 
 # install s3 tools
 RUN apk add python3 py3-pip
 RUN pip3 install awscli
+RUN apk del py3-pip
 
-#RUN apk del ca-certificates
+# cleanup
+RUN rm -rf /var/cache/apk/*
 
 ENV POSTGRES_DB="**None**" \
     POSTGRES_DB_FILE="**None**" \

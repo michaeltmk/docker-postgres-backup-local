@@ -5,15 +5,14 @@ ARG GOCRONVER=v0.0.9
 ARG TARGETOS
 ARG TARGETARCH
 RUN set -x \
-	&& apt-get update && apt-get install -y --no-install-recommends ca-certificates curl && rm -rf /var/lib/apt/lists/* \
+	&& apt-get update && apt-get install -y --no-install-recommends ca-certificates curl \
 	&& curl -L https://github.com/prodrigestivill/go-cron/releases/download/$GOCRONVER/go-cron-$TARGETOS-$TARGETARCH.gz | zcat > /usr/local/bin/go-cron \
 	&& chmod a+x /usr/local/bin/go-cron
 
 # install s3 tools
-RUN apt update && apt install python python3-pip -y
+RUN apt install python python3-pip -y
 RUN pip3 install awscli
-
-#RUN apt-get purge -y --auto-remove ca-certificates && apt-get clean
+RUN apt-get purge -y --auto-remove ca-certificates python3-pip curl && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENV POSTGRES_DB="**None**" \
     POSTGRES_DB_FILE="**None**" \
