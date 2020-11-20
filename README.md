@@ -1,4 +1,4 @@
-![Docker Pulls](https://img.shields.io/docker/pulls/prodrigestivill/postgres-backup-local)
+![Docker Pulls](https://img.shields.io/docker/pulls/michaeltse/docker-postgres-backup-local-s3)
 
 # postgres-backup-local
 
